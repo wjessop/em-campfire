@@ -1,3 +1,8 @@
+require 'simplecov'
+SimpleCov.start do
+  add_filter "/spec/"
+end
+
 require File.expand_path("../lib/em-campfire", File.dirname(__FILE__))
 
 require 'mocha'
@@ -15,10 +20,10 @@ def a klass, params={}
 end
   
 # Urg
-def mock_logger
+def mock_logger(klass = EM::Campfire)
   @logger_string = StringIO.new
   @fake_logger = Logger.new(@logger_string)
-  EM::Campfire.any_instance.expects(:logger).at_least(1).returns(@fake_logger)
+  klass.any_instance.expects(:logger).at_least(1).returns(@fake_logger)
 end
   
 # Bleurgh
@@ -51,28 +56,32 @@ def valid_params
   {:api_key => "6124d98749365e3db2c9e5b27ca04db6", :subdomain => "oxygen"} 
 end
 
-def stub_join_room_request(room)
+def stub_join_room_request(room, response_code = 200)
   url = "https://#{valid_params[:subdomain]}.campfirenow.com/room/#{room}/join.json"
   stub_request(:post, url).
     with(:headers => {'Authorization'=>[valid_params[:api_key], 'X'], 'Content-Type'=>'application/json'}).
-    to_return(:status => 200, :body => "", :headers => {})
+    to_return(:status => response_code, :body => "", :headers => {})
 end
 
-def stub_rooms_data_request
+def stub_rooms_data_request(response_code = 200)
   stub_request(:get, "https://#{valid_params[:subdomain]}.campfirenow.com/rooms.json").
     with(:headers => {'Authorization'=>['6124d98749365e3db2c9e5b27ca04db6', 'X']}).
-    to_return(:status => 200, :body => Yajl::Encoder.encode(:rooms => valid_room_cache_data.values), :headers => {})
+    to_return(:status => response_code, :body => Yajl::Encoder.encode(:rooms => valid_room_cache_data.values), :headers => {})
 end
 
-def stub_message_post_request
+def stub_message_post_request(response_code = 201)
   message_post_url = "https://#{valid_params[:subdomain]}.campfirenow.com/room/123/speak.json"
   stub_request(:post, message_post_url).
     with(:headers => {'Authorization'=>[valid_params[:api_key], 'X'], 'Content-Type' => 'application/json'}).
-    to_return(:status => 201, :body => "", :headers => {})
+    to_return(:status => response_code, :body => "", :headers => {})
 end
 
-def stub_stream_room_request(room)
-  stub_request(:get, "https://streaming.campfirenow.com/room/#{room}/live.json").
+def stream_url_for_room(id)
+  "https://streaming.campfirenow.com/room/#{id}/live.json"
+end
+
+def stub_stream_room_request(room, response_code = 200)
+  stub_request(:get, stream_url_for_room(room)).
     with(:headers => {'Authorization'=>[valid_params[:api_key], 'X']}).
-    to_return(:status => 200, :body => "", :headers => {})
+    to_return(:status => response_code, :body => "", :headers => {})
 end

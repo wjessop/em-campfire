@@ -31,14 +31,14 @@ module EventMachine
         end
       end
       
-      # @rooms = {}
-#       @user_cache = {}
+      @rooms = {}
+      # @user_cache = {}
       @room_cache = {}
       
       populate_room_list
         
-#       # populate bot data separately, in case we are ignoring ourselves
-#       fetch_data_for('me')
+      # # populate bot data separately, in case we are ignoring ourselves
+      # fetch_data_for('me')
     end
         
     def logger

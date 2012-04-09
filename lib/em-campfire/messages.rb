@@ -15,14 +15,14 @@ module EventMachine
     
       private
     
-      #  curl -vvv -H 'Content-Type: application/json' -d '{"message":{"body":"Yeeeeeaaaaaahh", "type":"Textmessage"}}' -u API_KEY:X https://something.campfirenow.com/room/2345678/speak.json
-      def send_message(room_id_or_name, payload, type)
-        if room_cache.size < 1
+      # curl -vvv -H 'Content-Type: application/json' -d '{"message":{"body":"Yeeeeeaaaaaahh", "type":"Textmessage"}}' -u API_KEY:X https://something.campfirenow.com/room/2345678/speak.json
+      def send_message(room_id_or_name, payload, type)        
+        room_id = room_id(room_id_or_name)
+        unless rooms[room_id]
           logger.error "Couldn't post message \"#{payload}\" to room #{room_id_or_name} as no rooms have been joined"
-          return
+          return false
         end
         
-        room_id = room_id(room_id_or_name)
         url = "https://#{subdomain}.campfirenow.com/room/#{room_id}/speak.json"
         http = EventMachine::HttpRequest.new(url).post :head => {'Content-Type' => 'application/json', 'authorization' => [api_key, 'X']}, :body => Yajl::Encoder.encode({:message => {:body => payload, :type => type}})
         http.errback { logger.error "Couldn't connect to #{url} to post message \"#{payload}\" to room #{room_id}" }
