@@ -16,13 +16,13 @@ Gem::Specification.new do |s|
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
   
-  s.add_dependency('eventmachine', '~> 1.0.0.beta.4')
-  s.add_dependency('yajl-ruby', '~> 0.8.3')
+  s.add_dependency('eventmachine', '~> 1.0.0.rc.4')
+  s.add_dependency('yajl-ruby', '~> 1.1')
   s.add_dependency('em-http-request', '~> 1.0.0.beta.4')
 
   s.add_development_dependency "rake", "~> 0.9.2"
   s.add_development_dependency "rspec", "~> 2.6.0"
   s.add_development_dependency "mocha"
-  s.add_development_dependency "webmock", "~> 1.7.6"
+  s.add_development_dependency "webmock"
   s.add_development_dependency "simplecov"
 end
