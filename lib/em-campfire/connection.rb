@@ -22,7 +22,6 @@ module EventMachine
           logger.debug "on_message callback does not exist"
         end
       end
-          
     end
   end
 end
