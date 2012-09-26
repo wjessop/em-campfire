@@ -24,7 +24,7 @@ module EventMachine
         end
         
         url = "https://#{subdomain}.campfirenow.com/room/#{room_id}/speak.json"
-        http = EventMachine::HttpRequest.new(url).post :head => {'Content-Type' => 'application/json', 'authorization' => [api_key, 'X']}, :body => Yajl::Encoder.encode({:message => {:body => payload, :type => type}})
+        http = EventMachine::HttpRequest.new(url).post :head => {'Content-Type' => 'application/json', 'authorization' => [api_key, 'X']}, :body => Yajl::Encoder.encode({:message => {:body => payload.to_s, :type => type}})
         http.errback { logger.error "Couldn't connect to #{url} to post message \"#{payload}\" to room #{room_id}" }
         http.callback {
           if [200,201].include? http.response_header.status

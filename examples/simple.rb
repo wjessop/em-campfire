@@ -3,9 +3,9 @@ $:.unshift File.join(File.dirname(__FILE__), '../lib')
 require 'em-campfire'
 
 EM.run {
-  connection = EM::Campfire.new(:subdomain => "foo", :api_key => "foo")
-  connection.join 293788 # Robot Army
-  connection.join 401839 # Monitoring
+  connection = EM::Campfire.new(:subdomain => "SUBDOMAIN", :api_key => "YOUR_API_KEY", :verbose => true)
+  connection.join 123
+  connection.join 456
   
   connection.on_message do |msg|
     puts msg.inspect

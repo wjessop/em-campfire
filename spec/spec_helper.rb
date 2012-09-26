@@ -5,7 +5,6 @@ end
 
 require File.expand_path("../lib/em-campfire", File.dirname(__FILE__))
 
-require 'mocha'
 require 'webmock/rspec'
 
 RSpec.configure do |config|
@@ -54,6 +53,18 @@ end
 
 def valid_params
   {:api_key => "6124d98749365e3db2c9e5b27ca04db6", :subdomain => "oxygen"} 
+end
+
+def stub_user_data_request(user_id, response_code = 200)
+  stub_request(:get, "https://#{valid_params[:subdomain]}.campfirenow.com/users/#{user_id}.json").
+    with(:headers => {'Authorization'=>['6124d98749365e3db2c9e5b27ca04db6', 'X']}).
+    to_return(:status => response_code, :body => Yajl::Encoder.encode(:user => valid_user_cache_data[user_id]), :headers => {})
+end
+
+def stub_timeout_user_data_request(user_id)
+  stub_request(:get, "https://#{valid_params[:subdomain]}.campfirenow.com/users/#{user_id}.json").
+    with(:headers => {'Authorization'=>['6124d98749365e3db2c9e5b27ca04db6', 'X']}).
+    to_timeout
 end
 
 def stub_join_room_request(room, response_code = 200)

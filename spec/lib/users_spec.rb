@@ -1,48 +1,45 @@
 require "spec_helper"
 
 describe EventMachine::Campfire::Users do
-  #
-  # Old Scamp specs
-  #
-  
-  # context "user operations" do
-     # it "should fetch user data" do
-     #   adaptor = a EM::Campfire
-     #   
-     #   EM.run_block {
-     #     stub_request(:get, "https://#{valid_params[:subdomain]}.campfirenow.com/users/123.json").
-     #       with(:headers => {'Authorization'=>[valid_params[:api_key], 'X'], 'Content-Type'=>'application/json'}).
-     #       to_return(:status => 200, :body => Yajl::Encoder.encode(:user => valid_user_cache_data[123]), :headers => {})
-     #     adaptor.send(:username_for, 123)
-     #     stub.should have_been_requested
-     #   }
-     # end
-       
-  #    it "should handle HTTP errors fetching user data" do
-  #      mock_logger
-  #      bot = a EM::Campfire
-  #   
-  #      url = "https://#{valid_params[:subdomain]}.campfirenow.com/users/123.json"
-  #      EM.run_block {
-  #        stub_request(:get, url).
-  #          with(:headers => {'Authorization'=>[valid_params[:api_key], 'X'], 'Content-Type'=>'application/json'}).
-  #          to_return(:status => 502, :body => "", :headers => {'Content-Type'=>'text/html'})
-  #        lambda {bot.username_for(123)}.should_not raise_error
-  #      }
-  #      logger_output.should =~ /ERROR.*Couldn't fetch user data for user 123 with url #{url}, http response from API was 502/
-  #    end
-  #    
-  #    it "should handle network errors fetching user data" do
-  #      mock_logger
-  #      bot = a EM::Campfire
-  #      
-  #      url = "https://#{valid_params[:subdomain]}.campfirenow.com/users/123.json"
-  #      EM.run_block {
-  #        stub_request(:get, url).
-  #          with(:headers => {'Authorization'=>[valid_params[:api_key], 'X'], 'Content-Type'=>'application/json'}).to_timeout
-  #        lambda {bot.username_for(123)}.should_not raise_error
-  #      }
-  #      logger_output.should =~ /ERROR.*Couldn't connect to #{url} to fetch user data for user 123/
-  #    end
-  
+  context "When fetching user data" do
+    before :each do
+      stub_rooms_data_request
+      stub_join_room_request(123)
+      EM.run_block { @adaptor = a(EM::Campfire) }
+    end
+
+    it "should get correct data for a user_id" do
+      mock_logger
+      stub_user_data_request(123)
+      user_data = nil
+      EM.run_block {
+        @adaptor.fetch_user_data_for_user_id(123) do |user_data_hash|
+          user_data = user_data_hash
+        end
+      }
+
+      user_data.should eql(valid_user_cache_data[123])
+      logger_output.should =~ %r{DEBUG.+Got the user data for 123}
+    end
+
+    it "should handle server errors" do
+      mock_logger
+      stub_user_data_request(123, 502)
+      EM.run_block {
+        @adaptor.fetch_user_data_for_user_id(123)
+      }
+
+      logger_output.should =~ %r{ERROR.+Couldn't fetch user data for user 123 with url .+, http response from API was 502}
+    end
+
+    it "should handle server timeouts" do
+      mock_logger
+      stub_timeout_user_data_request(123)
+      EM.run_block {
+        @adaptor.fetch_user_data_for_user_id(123)
+      }
+
+      logger_output.should =~ %r{ERROR.+Couldn't connect to .+ to fetch user data for user 123}
+    end
+  end
 end

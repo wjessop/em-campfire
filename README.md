@@ -28,7 +28,7 @@ EM.run {
 
 ## Requirements
 
-I've tested it in Ruby >= 1.9.3. It should work in 1.8.7+ though.
+I've tested it in Ruby >= 1.9.3.
 
 ## How to contribute
 
@@ -43,6 +43,10 @@ Here's the most direct way to get your work merged into the project:
 7. If necessary, rebase your commits into logical chunks, without errors
 8. Push the branch up
 9. Send a pull request for your branch
+
+# Coverage
+
+When you run the tests a coverage report is made. We're not aiming for 100% coverage, it's just a guide.
 
 Take a look at the TODO list or known issues for some inspiration if you need it.
 

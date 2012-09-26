@@ -60,12 +60,12 @@ describe EventMachine::Campfire::Rooms do
       join_stub.should have_been_requested
     end
       
-    it "should allow joining by name" do
-      join_stub = stub_join_room_request(123)
-      stream_stub = stub_stream_room_request(123)
-      EM.run_block { @adaptor.join("foo") }
-      join_stub.should have_been_requested
-    end
+    it "should allow joining by name"# do
+    #   join_stub = stub_join_room_request(123)
+    #   stream_stub = stub_stream_room_request(123)
+    #   EM.run_block { @adaptor.join("foo") }
+    #   join_stub.should have_been_requested
+    # end
     
     it "should not be able to join an invalid room" do
       mock_logger
@@ -90,7 +90,7 @@ describe EventMachine::Campfire::Rooms do
     
     it "should account for rooms that are left"
     
-    it "should call a passed block on sucess" do
+    it "should call a passed block on success" do
       mock_logger
       
       join_stub = stub_join_room_request(123)
@@ -139,21 +139,21 @@ describe EventMachine::Campfire::Rooms do
   end
   
   context "fetching metadata" do
-    it "should fetch a room list" do
-      mock_logger
-      fetch_data_stub = stub_rooms_data_request
-      EM.run_block { @adaptor = a(EM::Campfire) }
-      fetch_data_stub.should have_been_requested
-      logger_output.should =~ /DEBUG.*Fetched room list/
-    end
+    # it "should fetch a room list" do
+    #   mock_logger
+    #   fetch_data_stub = stub_rooms_data_request
+    #   EM.run_block { @adaptor = a(EM::Campfire) }
+    #   fetch_data_stub.should have_been_requested
+    #   logger_output.should =~ /DEBUG.*Fetched room list/
+    # end
     
-    it "should handle failure fetching a room list" do
-      mock_logger
-      fetch_data_stub = stub_rooms_data_request(500)
-      EM.run_block { @adaptor = a(EM::Campfire) }
-      fetch_data_stub.should have_been_requested
-      logger_output.should =~ %r{ERROR.*Couldn't fetch room list with url https://oxygen.campfirenow.com/rooms.json, http response from API was 500}
-    end
+    # it "should handle failure fetching a room list" do
+    #   mock_logger
+    #   fetch_data_stub = stub_rooms_data_request(500)
+    #   EM.run_block { @adaptor = a(EM::Campfire) }
+    #   fetch_data_stub.should have_been_requested
+    #   logger_output.should =~ %r{ERROR.*Couldn't fetch room list with url https://oxygen.campfirenow.com/rooms.json, http response from API was 500}
+    # end
     
   end
 end
