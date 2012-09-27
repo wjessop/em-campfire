@@ -1,4 +1,6 @@
 require 'simplecov'
+require 'base64'
+
 SimpleCov.start do
   add_filter "/spec/"
 end
@@ -51,14 +53,19 @@ def valid_room_cache_data
   }
 end
 
+def etag_for_data(data)
+  "\"#{Base64.encode64(data.to_s).strip}\""
+end
+
 def valid_params
   {:api_key => "6124d98749365e3db2c9e5b27ca04db6", :subdomain => "oxygen"} 
 end
 
 def stub_user_data_request(user_id, response_code = 200)
+  body = response_code == 200 ? Yajl::Encoder.encode(:user => valid_user_cache_data[user_id]) : ""
   stub_request(:get, "https://#{valid_params[:subdomain]}.campfirenow.com/users/#{user_id}.json").
     with(:headers => {'Authorization'=>['6124d98749365e3db2c9e5b27ca04db6', 'X']}).
-    to_return(:status => response_code, :body => Yajl::Encoder.encode(:user => valid_user_cache_data[user_id]), :headers => {})
+    to_return(:status => response_code, :body => body, :headers => {:ETag => etag_for_data(valid_user_cache_data[user_id])})
 end
 
 def stub_timeout_user_data_request(user_id)
@@ -75,9 +82,10 @@ def stub_join_room_request(room, response_code = 200)
 end
 
 def stub_rooms_data_request(response_code = 200)
+  body = response_code == 200 ? Yajl::Encoder.encode(:rooms => valid_room_cache_data.values) : ""
   stub_request(:get, "https://#{valid_params[:subdomain]}.campfirenow.com/rooms.json").
     with(:headers => {'Authorization'=>['6124d98749365e3db2c9e5b27ca04db6', 'X']}).
-    to_return(:status => response_code, :body => Yajl::Encoder.encode(:rooms => valid_room_cache_data.values), :headers => {})
+    to_return(:status => response_code, :body => body, :headers => {:ETag => etag_for_data(valid_room_cache_data)})
 end
 
 def stub_message_post_request(response_code = 201)

@@ -56,5 +56,28 @@ describe EventMachine::Campfire do
       it { @adaptor.logger.should be == @custom_logger }
     end
   end
+
+  describe "#cache" do
+    before :each do
+      EM.run_block { @adaptor = a EM::Campfire }
+      @valid_cache_stub = stub(:get => "foo", :set => nil, :respond_to => true)
+    end
+
+    it "should accept a valid cache object" do
+      @adaptor.cache = @valid_cache_stub
+      @adaptor.cache.set
+      @adaptor.cache.get.should eql("foo")
+    end
+
+    it "should reject a cache object that doesn't have a conforming interface" do
+      lambda { @adaptor.cache = stub(:respond_to) }.should raise_error(ArgumentError, "You must pass a conforming cache object")
+    end
+
+    it "should provide a default cache" do
+      @adaptor.cache.set("foo", "bar")
+      @adaptor.cache.get("foo").should eql("bar")
+    end
+
+  end
 end
 

@@ -8,6 +8,7 @@ require "em-campfire/connection"
 require "em-campfire/rooms"
 require "em-campfire/users"
 require "em-campfire/messages"
+require "em-campfire/cache"
 
 module EventMachine
   class Campfire
@@ -34,7 +35,16 @@ module EventMachine
       @rooms = {}
       @room_cache = {}
     end
-        
+
+    def cache=(a_cache)
+      raise(ArgumentError, "You must pass a conforming cache object") unless a_cache.respond_to(:set) && a_cache.respond_to(:get)
+      @cache = a_cache
+    end
+
+    def cache
+      @cache ||= EventMachine::Campfire::Cache.new
+    end
+
     def logger
       unless @logger
         @logger = Logger.new(STDOUT)
