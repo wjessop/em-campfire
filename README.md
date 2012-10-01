@@ -54,3 +54,16 @@ Take a look at the TODO list or known issues for some inspiration if you need it
 
 * I mock is\_me? in "should be able to ignore itself" in connection_spec.rb for convenience, work out a way to not do that
 * Some stuff is missing, such as user and room metadata fetching.
+
+# Missing features
+
+See the [Campfire API](https://github.com/37signals/campfire-api) for reference:
+
+* uploads.rb
+* transcripts.rb
+* search.rb
+* account.rb
+* Updating rooms
+* Leaving rooms
+* Locking/Unlocking rooms
+* Users get self
