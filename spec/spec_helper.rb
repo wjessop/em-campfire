@@ -19,15 +19,13 @@ def a klass, params={}
   params = valid_params.merge(params) if klass == EM::Campfire
   klass.new(params)
 end
-  
-# Urg
+
 def mock_logger(klass = EM::Campfire)
   @logger_string = StringIO.new
   @fake_logger = Logger.new(@logger_string)
   klass.any_instance.expects(:logger).at_least(1).returns(@fake_logger)
 end
-  
-# Bleurgh
+
 def logger_output
   str = @logger_string.dup
   str.rewind
