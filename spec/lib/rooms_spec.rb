@@ -1,6 +1,6 @@
 require "rooms_helper"
 
-class EMCampfireTestContainer < ModuleHarness
+class RoomsTestContainer < ModuleHarness
   include EventMachine::Campfire::Rooms
 
   def cache; @cache ||= EventMachine::Campfire::Cache.new; end
@@ -9,8 +9,8 @@ end
 
 describe EventMachine::Campfire::Rooms do
   before :each do
-    mock_logger(EMCampfireTestContainer)
-    @adaptor = EMCampfireTestContainer.new
+    mock_logger(RoomsTestContainer)
+    @adaptor = RoomsTestContainer.new
   end
 
   describe "#join" do
