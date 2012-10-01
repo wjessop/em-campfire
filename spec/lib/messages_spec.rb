@@ -12,7 +12,7 @@ describe EventMachine::Campfire::Messages do
   
   describe "posting messages" do
     it "should say" do
-      @adaptor.expects(:send_message).with(123, "foo", "Textmessage")
+      @adaptor.expects(:send_message).with(123, "foo", "TextMessage")
       @adaptor.say("foo", 123)
     end
 
@@ -45,7 +45,7 @@ describe EventMachine::Campfire::Messages do
       stub = stub_message_post_request
       EM.run_block { @adaptor.say("Hi", 123) }
       stub.should have_been_requested
-      logger_output.should =~ /DEBUG.*Posted Textmessage "Hi" to room 123/
+      logger_output.should =~ /DEBUG.*Posted TextMessage "Hi" to room 123/
     end
 
     it "should handle message posting failure" do

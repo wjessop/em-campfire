@@ -2,7 +2,7 @@ module EventMachine
   class Campfire
     module Messages
       def say(message, room_id_or_name)
-        send_message(room_id_or_name, message, "Textmessage")
+        send_message(room_id_or_name, message, "TextMessage")
       end
 
       def paste(message, room_id_or_name)
@@ -15,7 +15,7 @@ module EventMachine
     
       private
     
-      # curl -vvv -H 'Content-Type: application/json' -d '{"message":{"body":"Yeeeeeaaaaaahh", "type":"Textmessage"}}' -u API_KEY:X https://something.campfirenow.com/room/2345678/speak.json
+      # curl -vvv -H 'Content-Type: application/json' -d '{"message":{"body":"Yeeeeeaaaaaahh", "type":"TextMessage"}}' -u API_KEY:X https://something.campfirenow.com/room/2345678/speak.json
       def send_message(room_id, payload, type)        
         unless joined_rooms[room_id]
           logger.error "Couldn't post message \"#{payload}\" to room #{room_id} as no rooms have been joined"
