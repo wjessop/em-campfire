@@ -1,4 +1,4 @@
-require "spec_helper"
+require "users_helper"
 
 describe EventMachine::Campfire::Users do
   context "When fetching user data" do
