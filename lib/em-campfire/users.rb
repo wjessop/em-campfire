@@ -15,9 +15,11 @@ module EventMachine
           if http.response_header.status == 200
             logger.debug "Got the user data for #{user_id}"
             user_data = Yajl::Parser.parse(http.response)['user']
-            user_data['etag'] = http.response_header.etag
-            cache.set(user_cache_key(user_id), user_data)
+            cache.set(user_cache_key(user_id), user_data.merge({'etag' => http.response_header.etag}))
             yield user_data if block_given?
+          elsif http.response_header.status == 304
+            logger.debug "HTTP response was 304, serving user data for user 456 \(#{cached_user_data['name']}\) from cache"
+            yield cached_user_data if block_given?
           else
             logger.error "Couldn't fetch user data for user #{user_id} with url #{url}, http response from API was #{http.response_header.status}"
           end

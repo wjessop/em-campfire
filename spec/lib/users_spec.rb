@@ -1,21 +1,28 @@
 require "users_helper"
 
+class UsersTestContainer < ModuleHarness
+  include EventMachine::Campfire::Users
+
+  def cache; @cache ||= EventMachine::Campfire::Cache.new; end
+end
+
 describe EventMachine::Campfire::Users do
-  context "When fetching user data" do
+  describe "fetching user data" do
     before :each do
-      mock_logger
-      stub_rooms_data_request
-      stub_join_room_request(123)
-      EM.run_block { @adaptor = a(EM::Campfire) }
+      mock_logger(UsersTestContainer)
+      @adaptor = UsersTestContainer.new
     end
 
     it "should get correct data for a user_id" do
       stub_user_data_request(123)
+      yielded_data = nil
       EM.run_block {
         @adaptor.fetch_user_data_for_user_id(123) do |user_data|
-          user_data["name"].should eql(valid_user_cache_data[123]["name"])
+          yielded_data = user_data
         end
       }
+
+      yielded_data["name"].should eql(valid_user_cache_data[123]["name"])
 
       logger_output.should =~ %r{DEBUG.+Got the user data for 123}
     end
@@ -38,34 +45,44 @@ describe EventMachine::Campfire::Users do
       logger_output.should =~ %r{ERROR.+Couldn't connect to .+ to fetch user data for user 123}
     end
 
-    it "should cache user data" do
-      stub_user_data_request(123)
-      @adaptor.cache.expects(:set).with("user-data-123", valid_user_cache_data[123].merge({"etag" => etag_for_data(valid_user_cache_data[123])}))
-      EM.run_block {
-        @adaptor.fetch_user_data_for_user_id(123)
-      }
-    end
+    describe "when the cache is fresh" do
+      before :each do
+        @user_data = valid_user_cache_data[456]
+      end
 
-    it "should not update the user data cache when user data is fresh" do
-      user_data = valid_user_cache_data[123]
-      stub_user_data_request(123, 304)
-      @adaptor.cache.expects(:get).with("user-data-123").returns(etag_for_data(user_data))
-      @adaptor.cache.expects(:set).never
+      it "should not update the user cache data" do
+        stub_user_data_request(123, 304)
+        @adaptor.cache.expects(:get).with("user-data-123").returns(@user_data)
+        @adaptor.cache.expects(:set).never
 
-      EM.run_block {
-        @adaptor.fetch_user_data_for_user_id(123)
-      }
+        EM.run_block {
+          @adaptor.fetch_user_data_for_user_id(123)
+        }
+      end
+
+      it "should serve cached data" do
+        @adaptor.cache.expects(:get).with("user-data-456").returns(@user_data)
+        stub_user_data_request(456, 304)
+        yielded_data = nil
+
+        EM.run_block {
+          @adaptor.fetch_user_data_for_user_id(456) { |data| yielded_data = data }
+        }
+
+        logger_output.should =~ %r{DEBUG.+HTTP response was 304, serving user data for user 456 \(#{@user_data['name']}\) from cache}
+        yielded_data.should eql(@user_data)
+      end
     end
 
     it "should update the user data cache when user data is stale" do
       user_data = valid_user_cache_data[123]
       user_data_with_etag = user_data.merge({"etag" => etag_for_data(user_data)})
       stub_user_data_request(123)
-      @adaptor.cache.expects(:get).with("user-data-123").returns("no such etag")
+      @adaptor.cache.expects(:get).with("user-data-123").returns(user_data)
       @adaptor.cache.expects(:set).with("user-data-123", user_data_with_etag)
 
       EM.run_block {
-        @adaptor.fetch_user_data_for_user_id(123) {|data| data.should eql(user_data_with_etag)}
+        @adaptor.fetch_user_data_for_user_id(123)
       }
     end
   end
