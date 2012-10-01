@@ -1,10 +1,8 @@
 require "rooms_helper"
 
-class EMCampfireTestContainer
+class EMCampfireTestContainer < ModuleHarness
   include EventMachine::Campfire::Rooms
 
-  def subdomain; valid_params[:subdomain]; end
-  def api_key; valid_params[:api_key]; end
   def cache; @cache ||= EventMachine::Campfire::Cache.new; end
   def process_message; end
 end

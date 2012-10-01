@@ -16,10 +16,9 @@ module EventMachine
       private
     
       # curl -vvv -H 'Content-Type: application/json' -d '{"message":{"body":"Yeeeeeaaaaaahh", "type":"Textmessage"}}' -u API_KEY:X https://something.campfirenow.com/room/2345678/speak.json
-      def send_message(room_id_or_name, payload, type)        
-        room_id = room_id(room_id_or_name)
-        unless rooms[room_id]
-          logger.error "Couldn't post message \"#{payload}\" to room #{room_id_or_name} as no rooms have been joined"
+      def send_message(room_id, payload, type)        
+        unless joined_rooms[room_id]
+          logger.error "Couldn't post message \"#{payload}\" to room #{room_id} as no rooms have been joined"
           return false
         end
         

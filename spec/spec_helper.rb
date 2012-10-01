@@ -59,11 +59,7 @@ def stub_timeout_user_data_request(user_id)
     to_timeout
 end
 
-# 
-
-def stub_message_post_request(response_code = 201)
-  message_post_url = "https://#{valid_params[:subdomain]}.campfirenow.com/room/123/speak.json"
-  stub_request(:post, message_post_url).
-    with(:headers => {'Authorization'=>[valid_params[:api_key], 'X'], 'Content-Type' => 'application/json'}).
-    to_return(:status => response_code, :body => "", :headers => {})
+class ModuleHarness
+  def subdomain; valid_params[:subdomain]; end
+  def api_key; valid_params[:api_key]; end
 end
