@@ -3,7 +3,7 @@ require "spec_helper"
 describe EventMachine::Campfire do
   
   before :each do
-    stub_rooms_data_request
+    stub_room_list_data_request
   end
     
   describe "#initialize" do

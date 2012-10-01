@@ -31,9 +31,6 @@ module EventMachine
           logger.warn "em-campfire initialized with #{k.inspect} => #{v.inspect} but NO UNDERSTAND!"
         end
       end
-      
-      @rooms = {}
-      @room_cache = {}
     end
 
     def cache=(a_cache)
