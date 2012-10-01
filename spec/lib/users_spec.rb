@@ -12,23 +12,19 @@ describe EventMachine::Campfire::Users do
   end
 
   describe "#is_me?" do
-    it "should run the passed block if the passed user_id belongs to me" do
+    it "should return true if the passed user_id belongs to me" do
       @adaptor.cache.stubs(:get).with('user-data-me').returns(valid_user_cache_data['me'])
-      ping = mock()
-      ping.expects(:ping).once
 
       EM.run_block {
-        @adaptor.is_me?(789) {ping.ping}
+        @adaptor.is_me?(789).should eql(true)
       }
     end
 
-    it "should not run the passed block if the passed user_id doesn't belong to me" do
+    it "should return false if the passed user_id doesn't belong to me" do
       @adaptor.cache.stubs(:get).with('user-data-me').returns(valid_user_cache_data['me'])
-      ping = mock()
-      ping.expects(:ping).never
 
       EM.run_block {
-        @adaptor.is_me?(123) {ping.ping}
+        @adaptor.is_me?(123).should eql(false)
       }
     end
 
@@ -39,14 +35,14 @@ describe EventMachine::Campfire::Users do
     end
 
     it "should fetch data if no cached data is available" do
+      mock_logger(UsersTestContainer)
       @adaptor.cache.expects(:get).with('user-data-me').returns(nil)
       @adaptor.expects(:fetch_user_data_for_self).once.yields(valid_user_cache_data['me'])
-      ping = mock()
-      ping.expects(:ping).once
 
       EM.run_block {
-        @adaptor.is_me?(789) {ping.ping}
+        @adaptor.is_me?(789)
       }
+      logger_output.should =~ /DEBUG.*No user data cache exists for me, fetching it now/
     end
   end
 
@@ -137,6 +133,8 @@ describe EventMachine::Campfire::Users do
         }
         stub.should have_been_requested
         yielded_data.should eql(valid_user_cache_data['me'])
+        # FIXME: Can't work out why these debug messages get dumped to the terminal when others don't
+        logger_output.should =~ /DEBUG.+Got the user data for self/
       end
 
       it "should handle server errors" do

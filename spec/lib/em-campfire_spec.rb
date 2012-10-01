@@ -3,7 +3,8 @@ require "spec_helper"
 describe EventMachine::Campfire do
   
   before :each do
-    stub_room_list_data_request
+    # stub_room_list_data_request
+    @self_data_request_stub = stub_self_data_request
   end
     
   describe "#initialize" do
@@ -18,6 +19,11 @@ describe EventMachine::Campfire do
     it "should require essential parameters" do
       lambda { EM::Campfire.new }.should raise_error(ArgumentError, "You must pass an API key")
       lambda { EM::Campfire.new(:api_key => "foo") }.should raise_error(ArgumentError, "You must pass a subdomain")
+    end
+
+    it "should fetch data about me" do
+      EM.run_block { a(EM::Campfire).should be_a(EM::Campfire) }
+      @self_data_request_stub.should have_been_requested
     end
   end
   

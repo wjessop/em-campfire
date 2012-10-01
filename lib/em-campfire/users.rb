@@ -40,7 +40,7 @@ module EventMachine
         http = EventMachine::HttpRequest.new(url).get(:head => {'authorization' => [api_key, 'X'], "Content-Type" => "application/json"}) #.merge(etag_header)
         http.callback do
           if http.response_header.status == 200
-            logger.debug "Got the user data for selt"
+            logger.debug "Got the user data for self"
             user_data = Yajl::Parser.parse(http.response)['user']
             cache.set(user_cache_key('me'), user_data.merge({'etag' => http.response_header.etag}))
             yield user_data if block_given?
@@ -57,13 +57,13 @@ module EventMachine
         end
       end
 
-      def is_me?(user_id, &block)
+      def is_me?(user_id)
         if cache_data = cache.get(user_cache_key('me'))
-          yield if cache_data['id'] == user_id && block_given?
+          return cache_data['id'] == user_id
         else
-          fetch_user_data_for_self {|data|
-            block.yield if data['id'] == user_id && block_given?
-          }
+          logger.debug "No user data cache exists for me, fetching it now"
+          fetch_user_data_for_self
+          return false
         end
       end
 

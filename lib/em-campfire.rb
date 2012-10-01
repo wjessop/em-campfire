@@ -22,7 +22,7 @@ module EventMachine
     def initialize(options = {})
       raise ArgumentError, "You must pass an API key" unless options[:api_key]
       raise ArgumentError, "You must pass a subdomain" unless options[:subdomain]
-      
+
       options.each do |k,v|
         s = "#{k}="
         if respond_to?(s)
@@ -31,6 +31,8 @@ module EventMachine
           raise ArgumentError, "#{k.inspect} is not a valid option"
         end
       end
+
+      fetch_user_data_for_self
     end
 
     def cache=(a_cache)

@@ -13,20 +13,15 @@ module EventMachine
 
       def process_message(msg)
         logger.debug "Received message #{msg.inspect}"
-
-        message_handler = lambda {
+        if ignore_self && is_me?(msg[:user_id])
+          logger.debug "Ignoring message with user_id #{msg[:user_id]} as that is me and ignore_self is true"
+        else
           if on_message_block
             logger.debug "on_message callback exists, calling it with #{msg.inspect}"
             on_message_block.call(msg)
           else
             logger.debug "on_message callback does not exist"
           end
-        }
-
-        if ignore_self
-          is_me?(msg[:user_id], &message_handler)
-        else
-          message_handler.call
         end
       end
     end
