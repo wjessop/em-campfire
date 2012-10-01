@@ -11,20 +11,67 @@ require 'em-campfire'
 
 EM.run {
   connection = EM::Campfire.new(:subdomain => "foo", :api_key => "jhhekrlfjnksdjnliyherkjb", :verbose => true)
-  connection.join 293778
-  connection.join 401739
-  
+
+  # Join a room, you will need the room id
+  connection.join(10101)
+
+  # Stream a room, need to join it first
+  connection.join(2345) {|id| connection.stream(id) }
+
+  # Dump out any message we get
   connection.on_message do |msg|
     puts msg.inspect
   end
-  
+
   # Give lib a chance to connect
   EM::Timer.new(10) do
     # Say something on a specific channel
-    connection.say "foofoofoo", "Robot Army"
+    connection.say "foofoofoo", 10101
+
+    # Paste something
+    connection.paste "foo\nfoo\nfoo", 10101
+
+    # Play a sound
+    connection.play "nyan", 10101
   end
 }
 ```
+
+For more features see the examples.
+
+### Connection options
+
+There are a few optional parameters you can create an EM::Campfire with:
+
+``` ruby
+require 'em-campfire'
+
+EM.run {
+  connection = EM::Campfire.new(
+    :subdomain => "foo",
+    :api_key => "jhhekrlfjnksdjnliyherkjb",
+    :verbose => true,
+    :logger => Logger::Syslog.new('process_name', Syslog::LOG_PID | Syslog::LOG_CONS),
+    :cache => custom_cache_object
+  )
+
+  # more code
+}
+```
+
+#### :verbose
+
+If set to true sets the log level to DEBUG, defaults to false.
+
+#### :logger
+
+em-campfire uses a Logger instance from stdlib by default, you can switch this out by passing in your own logger instance.
+
+#### :cache
+
+em-campfire caches responses from the Campfire API and issues conditional requests using ETags. By default it uses an in-memory cache of data returned, and this is fine for most people, but if you want something custom, possibly more permanent, you can pass in your own cache object.
+
+The cache object should conform to the get/set API of the [redis-rb](https://github.com/redis/redis-rb) lib (making that a drop-in replacement). Just make sure that you use the synchrony driver.
 
 ## Requirements
 
@@ -34,7 +81,7 @@ I've tested it in Ruby >= 1.9.3.
 
 * I mock is\_me? in "should be able to ignore itself" in connection_spec.rb for convenience, work out a way to not do that
 
-# Missing features
+### Missing features
 
 em-campfire was written primarily to support [Scamp](https://github.com/wjessop/Scamp)/[scamp-campfire ](https://github.com/omgitsads/scamp-campfire) so I've implemented the features required for that first. There are other features left-over that I didn't need and I'll get round to at some point. If you need one before then ping me and I might write it, or a pull request is of course welcome.
 
