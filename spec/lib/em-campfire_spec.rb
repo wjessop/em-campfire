@@ -11,10 +11,8 @@ describe EventMachine::Campfire do
       EM.run_block { a(EM::Campfire).should be_a(EM::Campfire) }
     end
     
-    it "should warn if given an option it doesn't know" do
-      mock_logger
-      EM.run_block { a(EM::Campfire, :fred => "estaire").should be_a(EM::Campfire) }
-      logger_output.should =~ /WARN.*em-campfire initialized with :fred => "estaire" but NO UNDERSTAND!/
+    it "should raise when given an option it doesn't understand" do
+      lambda { EM::Campfire.new(valid_params.merge({:fred => "estaire"}))}.should raise_error(ArgumentError, ":fred is not a valid option")
     end
     
     it "should require essential parameters" do

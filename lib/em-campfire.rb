@@ -28,7 +28,7 @@ module EventMachine
         if respond_to?(s)
           send(s, v)
         else
-          logger.warn "em-campfire initialized with #{k.inspect} => #{v.inspect} but NO UNDERSTAND!"
+          raise ArgumentError, "#{k.inspect} is not a valid option"
         end
       end
     end
