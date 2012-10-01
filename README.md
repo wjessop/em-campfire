@@ -95,7 +95,6 @@ See the [Campfire API](https://github.com/37signals/campfire-api) for reference:
 * [Rooms (updating, locking, unlocking, leaving)](https://github.com/37signals/campfire-api/blob/master/sections/rooms.md)
 * [Transcripts](https://github.com/37signals/campfire-api/blob/master/sections/transcripts.md)
 * [Uploads](https://github.com/37signals/campfire-api/blob/master/sections/uploads.md)
-* [Users (get self)](https://github.com/37signals/campfire-api/blob/master/sections/users.md)
 * [Search](https://github.com/37signals/campfire-api/blob/master/sections/search.md)
 * [Account](https://github.com/37signals/campfire-api/blob/master/sections/account.md)
 

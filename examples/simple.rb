@@ -25,6 +25,9 @@ EM.run {
   # Fetch user data for a specific user
   connection.fetch_user_data_for_user_id(123) {|data| puts data.inspect }
 
+  # Fetch data about the 'sef' user
+  connection.fetch_user_data_for_self {|data| puts data.inspect }
+
   # Give lib a chance to connect
   EM::Timer.new(5) do
     # Say something on a specific channel

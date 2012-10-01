@@ -29,6 +29,33 @@ module EventMachine
         end
       end
 
+      def fetch_user_data_for_self
+        url = "https://#{subdomain}.campfirenow.com/users/me.json"
+
+        etag_header = {}
+        if cached_user_data = cache.get(user_cache_key('me'))
+          etag_header = {"ETag" => cached_user_data["etag"]}
+        end
+
+        http = EventMachine::HttpRequest.new(url).get(:head => {'authorization' => [api_key, 'X'], "Content-Type" => "application/json"}) #.merge(etag_header)
+        http.callback do
+          if http.response_header.status == 200
+            logger.debug "Got the user data for selt"
+            user_data = Yajl::Parser.parse(http.response)['user']
+            cache.set(user_cache_key('me'), user_data.merge({'etag' => http.response_header.etag}))
+            yield user_data if block_given?
+          elsif http.response_header.status == 304
+            logger.debug "HTTP response was 304, serving user data for self from cache"
+            yield cached_user_data if block_given?
+          else
+            logger.error "Couldn't fetch user data for self with url #{url}, http response from API was #{http.response_header.status}"
+          end
+        end
+
+        http.errback do
+          logger.error "Couldn't connect to #{url} to fetch user data for self"
+        end
+      end
       private
 
       def user_cache_key(user_id)
