@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 def valid_user_cache_data
-  {123 => {"name" => "foo"}, 456 => {"name" => "bar"}, 'me' => {"name" => "bot", "id" => 123}}
+  {123 => {"name" => "foo"}, 456 => {"name" => "bar"}, 'me' => {"name" => "bot", "id" => 789}}
 end
 
 # Fetching data about users

@@ -73,6 +73,10 @@ em-campfire caches responses from the Campfire API and issues conditional reques
 
 The cache object should conform to the get/set API of the [redis-rb](https://github.com/redis/redis-rb) lib (making that a drop-in replacement). Just make sure that you use the synchrony driver.
 
+#### :ignore_self
+
+em-campfire receives messages that it posted on it's streaming connections. By default it processes these just as it would any other message. set :ignore_self to true to make it ignore messages it sends.
+
 ## Requirements
 
 I've tested it in Ruby >= 1.9.3.

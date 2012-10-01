@@ -56,6 +56,17 @@ module EventMachine
           logger.error "Couldn't connect to #{url} to fetch user data for self"
         end
       end
+
+      def is_me?(user_id, &block)
+        if cache_data = cache.get(user_cache_key('me'))
+          yield if cache_data['id'] == user_id && block_given?
+        else
+          fetch_user_data_for_self {|data|
+            block.yield if data['id'] == user_id && block_given?
+          }
+        end
+      end
+
       private
 
       def user_cache_key(user_id)

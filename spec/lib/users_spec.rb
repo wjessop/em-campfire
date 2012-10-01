@@ -7,10 +7,52 @@ class UsersTestContainer < ModuleHarness
 end
 
 describe EventMachine::Campfire::Users do
+  before :each do
+    @adaptor = UsersTestContainer.new
+  end
+
+  describe "#is_me?" do
+    it "should run the passed block if the passed user_id belongs to me" do
+      @adaptor.cache.stubs(:get).with('user-data-me').returns(valid_user_cache_data['me'])
+      ping = mock()
+      ping.expects(:ping).once
+
+      EM.run_block {
+        @adaptor.is_me?(789) {ping.ping}
+      }
+    end
+
+    it "should not run the passed block if the passed user_id doesn't belong to me" do
+      @adaptor.cache.stubs(:get).with('user-data-me').returns(valid_user_cache_data['me'])
+      ping = mock()
+      ping.expects(:ping).never
+
+      EM.run_block {
+        @adaptor.is_me?(123) {ping.ping}
+      }
+    end
+
+    it "should use cached data if available" do
+      @adaptor.cache.expects(:get).with('user-data-me').returns(valid_user_cache_data['me'])
+      @adaptor.expects(:fetch_user_data_for_self).never
+      EM.run_block { @adaptor.is_me?(789) }
+    end
+
+    it "should fetch data if no cached data is available" do
+      @adaptor.cache.expects(:get).with('user-data-me').returns(nil)
+      @adaptor.expects(:fetch_user_data_for_self).once.yields(valid_user_cache_data['me'])
+      ping = mock()
+      ping.expects(:ping).once
+
+      EM.run_block {
+        @adaptor.is_me?(789) {ping.ping}
+      }
+    end
+  end
+
   describe "fetching user data" do
     before :each do
       mock_logger(UsersTestContainer)
-      @adaptor = UsersTestContainer.new
     end
 
     it "should get correct data for a user_id" do

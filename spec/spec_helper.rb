@@ -37,7 +37,7 @@ def etag_for_data(data)
 end
 
 def valid_params
-  {:api_key => "6124d98749365e3db2c9e5b27ca04db6", :subdomain => "oxygen"} 
+  {:api_key => "6124d98749365e3db2c9e5b27ca04db6", :subdomain => "oxygen", :ignore_self => false} 
 end
 
 
