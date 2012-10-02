@@ -52,7 +52,8 @@ EM.run {
     :api_key => "jhhekrlfjnksdjnliyherkjb",
     :verbose => true,
     :logger => Logger::Syslog.new('process_name', Syslog::LOG_PID | Syslog::LOG_CONS),
-    :cache => custom_cache_object
+    :cache => custom_cache_object,
+    :ignore_self => true
   )
 
   # more code
