@@ -84,7 +84,6 @@ I've tested it in Ruby >= 1.9.3.
 
 ## TODO
 
-* I mock is\_me? in "should be able to ignore itself" in connection_spec.rb for convenience, work out a way to not do that
 * See if http connection/cacheing/failure handling can be abstracted
 * Allow user to pass success/error callbacks
 * Re-try failed HTTP requests
