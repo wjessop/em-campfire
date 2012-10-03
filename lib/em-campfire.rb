@@ -12,7 +12,7 @@ require "em-campfire/cache"
 
 module EventMachine
   class Campfire
-    attr_accessor :logger, :verbose, :subdomain, :api_key
+    attr_accessor :logger, :verbose, :subdomain, :api_key, :ignore_timestamps
     
     include Connection
     include Rooms
@@ -55,6 +55,10 @@ module EventMachine
     def verbose=(is_verbose)
       @verbose = is_verbose
       logger.level = Logger::DEBUG if is_verbose
+    end
+
+    def ignore_timestamps?
+      self.ignore_timestamps || false
     end
   end # Campfire
 end # EventMachine

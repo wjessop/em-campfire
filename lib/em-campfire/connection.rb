@@ -12,12 +12,12 @@ module EventMachine
       attr_accessor :on_message_block
 
       def process_message(msg)
+        return if (msg[:type] == "TimestampMessage" && ignore_timestamps?)
         logger.debug "Received message #{msg.inspect}"
         if ignore_self && is_me?(msg[:user_id])
           logger.debug "Ignoring message with user_id #{msg[:user_id]} as that is me and ignore_self is true"
         else
           if on_message_block
-            logger.debug "on_message callback exists, calling it with #{msg.inspect}"
             on_message_block.call(msg)
           else
             logger.debug "on_message callback does not exist"

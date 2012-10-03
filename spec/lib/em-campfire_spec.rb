@@ -81,7 +81,20 @@ describe EventMachine::Campfire do
       @adaptor.cache.set("foo", "bar")
       @adaptor.cache.get("foo").should eql("bar")
     end
+  end
 
+  describe "#ignore_timestamps" do
+    before :each do
+      EM.run_block { @adaptor = a EM::Campfire }
+    end
+
+    it "should default to false" do
+      @adaptor.ignore_timestamps?.should eql(false)
+    end
+
+    it "should be overridable at initialization" do
+      EM.run_block { a(EM::Campfire, :ignore_timestamps => true).ignore_timestamps?.should be_true }
+    end
   end
 end
 
