@@ -3,7 +3,6 @@ require "spec_helper"
 describe EventMachine::Campfire do
   
   before :each do
-    # stub_room_list_data_request
     @self_data_request_stub = stub_self_data_request
   end
     
