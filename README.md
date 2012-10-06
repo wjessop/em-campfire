@@ -53,7 +53,8 @@ EM.run {
     :verbose => true,
     :logger => Logger::Syslog.new('process_name', Syslog::LOG_PID | Syslog::LOG_CONS),
     :cache => custom_cache_object,
-    :ignore_self => true
+    :ignore_self => true,
+    :ignore_timestamps => true
   )
 
   # more code
@@ -77,6 +78,10 @@ The cache object should conform to the get/set API of the [redis-rb](https://git
 #### :ignore_self
 
 em-campfire receives messages that it posted on it's streaming connections. By default it processes these just as it would any other message. set :ignore_self to true to make it ignore messages it sends.
+
+#### :ignore_timestamps
+
+Campfire sends periodic timestamp messages. They're useless for most applications, so set this option and they will be totally ignored.
 
 ## Requirements
 
