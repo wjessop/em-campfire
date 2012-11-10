@@ -1,3 +1,5 @@
+[![Build Status](https://secure.travis-ci.org/wjessop/em-campfire.png?branch=master)](https://travis-ci.org/wjessop/em-campfire)
+
 em-campfire is a library for interacting with the [Campfire](http://campfirenow.com/) chat application. It was extracted from the [Scamp](https://github.com/wjessop/Scamp) v1 bot framework.
 
 ## Installation
