@@ -44,6 +44,7 @@ module EventMachine
             json_parser << chunk
           rescue Yajl::ParseError => e
             logger.error "Couldn't parse json data for room 123, data was #{chunk}, error was: #{e}"
+            EM.next_tick {stream(room_id)}
           end
         end
       end
