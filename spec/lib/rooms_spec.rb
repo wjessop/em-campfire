@@ -31,7 +31,7 @@ describe EventMachine::Campfire::Rooms do
       join_stub = stub_join_room_request(123)
       object = mock()
       object.expects(:ping).with("foo")
-          
+
       EM.run_block {
         @adaptor.join(123) {|room_id| object.ping("foo") }
       }
@@ -90,7 +90,7 @@ describe EventMachine::Campfire::Rooms do
       stream_stub.should have_been_requested.twice
     end
   end
-  
+
   describe "fetching metadata" do
     describe "for individual rooms" do
       it "should fetch room data" do
