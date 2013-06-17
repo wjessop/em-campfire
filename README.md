@@ -109,6 +109,10 @@ See the [Campfire API](https://github.com/37signals/campfire-api) for reference:
 * [Search](https://github.com/37signals/campfire-api/blob/master/sections/search.md)
 * [Account](https://github.com/37signals/campfire-api/blob/master/sections/account.md)
 
+## Authors
+
+* Will Jessop (will@willj.net)
+
 ## Contributing
 
 See the CONTRIBUTING file
