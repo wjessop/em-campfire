@@ -26,7 +26,7 @@ module EventMachine
 
         url = "https://streaming.campfirenow.com/room/#{room_id}/live.json"
         # Timeout per https://github.com/igrigorik/em-http-request/wiki/Redirects-and-Timeouts
-        http = EventMachine::HttpRequest.new(url, :connect_timeout => 20, :inactivity_timeout => 0).get :head => {'authorization' => [api_key, 'X']}
+        http = EventMachine::HttpRequest.new(url, :connect_timeout => 20, :inactivity_timeout => 4).get :head => {'authorization' => [api_key, 'X']}
         http.errback {
           logger.error "Couldn't stream room #{room_id} at url #{url}, error was #{http.error}"
           EM.next_tick {stream(room_id)}
@@ -40,6 +40,7 @@ module EventMachine
           EM.next_tick {stream(room_id)}
         }
         http.stream do |chunk|
+          logger.debug "Got keepalive" if chunk == " "
           begin
             json_parser << chunk
           rescue Yajl::ParseError => e
