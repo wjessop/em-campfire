@@ -48,6 +48,7 @@ module EventMachine
       unless @logger
         @logger = Logger.new(STDOUT)
         @logger.level = (verbose ? Logger::DEBUG : Logger::INFO)
+        @logger.info "em-campfire using default logger as none was provided"
       end
       @logger
     end
