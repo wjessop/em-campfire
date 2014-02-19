@@ -6,3 +6,4 @@ examples/Gemfile
 examples/Gemfile.lock
 coverage/
 .rvmrc
+.DS_Store
