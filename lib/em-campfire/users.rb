@@ -37,7 +37,7 @@ module EventMachine
           etag_header = {"ETag" => cached_user_data["etag"]}
         end
 
-        http = EventMachine::HttpRequest.new(url).get(:head => {'authorization' => [api_key, 'X'], "Content-Type" => "application/json"}, 'user-agent' => user_agent) #.merge(etag_header)
+        http = EventMachine::HttpRequest.new(url).get(:head => {'authorization' => [api_key, 'X'], "Content-Type" => "application/json", 'user-agent' => user_agent}) #.merge(etag_header)
         http.callback do
           if http.response_header.status == 200
             logger.debug "Got the user data for self"
