@@ -7,7 +7,7 @@ module EventMachine
       def join(room_id, &blk)
         logger.info "Joining room #{room_id}"
         url = "https://#{subdomain}.campfirenow.com/room/#{room_id}/join.json"
-        http = EventMachine::HttpRequest.new(url).post :head => {'Content-Type' => 'application/json', 'authorization' => [api_key, 'X']}
+        http = EventMachine::HttpRequest.new(url).post :head => {'Content-Type' => 'application/json', 'authorization' => [api_key, 'X'], 'user-agent' => user_agent}
         http.errback { logger.error "Error joining room: #{room_id}" }
         http.callback {
           if http.response_header.status == 200
@@ -26,7 +26,7 @@ module EventMachine
 
         url = "https://streaming.campfirenow.com/room/#{room_id}/live.json"
         # Timeout per https://github.com/igrigorik/em-http-request/wiki/Redirects-and-Timeouts
-        http = EventMachine::HttpRequest.new(url, :connect_timeout => 20, :inactivity_timeout => 4).get :head => {'authorization' => [api_key, 'X']}
+        http = EventMachine::HttpRequest.new(url, :connect_timeout => 20, :inactivity_timeout => 4).get :head => {'authorization' => [api_key, 'X'], 'user-agent' => user_agent}
         http.errback {
           logger.error "Couldn't stream room #{room_id} at url #{url}, error was #{http.error}"
           EM.next_tick {stream(room_id)}
@@ -59,7 +59,7 @@ module EventMachine
           etag_header = {"ETag" => cached_room_data["etag"]}
         end
 
-        http = EventMachine::HttpRequest.new(url).get :head => {'authorization' => [api_key, 'X'], 'Content-Type'=>'application/json'}.merge(etag_header)
+        http = EventMachine::HttpRequest.new(url).get :head => {'authorization' => [api_key, 'X'], 'Content-Type'=>'application/json', 'user-agent' => user_agent}.merge(etag_header)
         http.errback { logger.error "Couldn't connect to url #{url} to fetch room data" }
         http.callback {
           if http.response_header.status == 200
@@ -84,7 +84,7 @@ module EventMachine
           etag_header = {"ETag" => cached_room_list_data["etag"]}
         end
 
-        http = EventMachine::HttpRequest.new(url).get :head => {'Content-Type' => 'application/json', 'authorization' => [api_key, 'X']}.merge(etag_header)
+        http = EventMachine::HttpRequest.new(url).get :head => {'Content-Type' => 'application/json', 'authorization' => [api_key, 'X'], 'user-agent' => user_agent}.merge(etag_header)
 
         http.errback { logger.error "Error processing url #{url} to fetch room data: #{http.error}" }
         http.callback {

@@ -12,7 +12,7 @@ require "em-campfire/cache"
 
 module EventMachine
   class Campfire
-    attr_accessor :logger, :verbose, :subdomain, :api_key, :ignore_timestamps
+    attr_accessor :logger, :verbose, :subdomain, :api_key, :ignore_timestamps, :user_agent
     
     include Connection
     include Rooms

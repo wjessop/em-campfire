@@ -56,7 +56,8 @@ EM.run {
     :logger => Logger::Syslog.new('process_name', Syslog::LOG_PID | Syslog::LOG_CONS),
     :cache => custom_cache_object,
     :ignore_self => true,
-    :ignore_timestamps => true
+    :ignore_timestamps => true,
+    :user_agent => "my bot"
   )
 
   # more code
