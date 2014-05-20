@@ -95,5 +95,20 @@ describe EventMachine::Campfire do
       EM.run_block { a(EM::Campfire, :ignore_timestamps => true).ignore_timestamps?.should be_true }
     end
   end
+
+  describe "#user_agent" do
+    before :each do
+      EM.run_block { @adaptor = a EM::Campfire }
+    end
+
+    it "should default to em-campfire" do
+      @adaptor.user_agent.should eql("em-campfire")
+    end
+
+    it "should be overridable at initialization" do
+      @self_data_request_stub = stub_override_user_agent_self_data_request
+      EM.run_block { a(EM::Campfire, :user_agent => "testing/1.0").user_agent.should eql("testing/1.0") }
+    end
+  end
 end
 

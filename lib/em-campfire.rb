@@ -12,7 +12,7 @@ require "em-campfire/cache"
 
 module EventMachine
   class Campfire
-    attr_accessor :logger, :verbose, :subdomain, :api_key, :ignore_timestamps
+    attr_accessor :logger, :verbose, :subdomain, :api_key, :ignore_timestamps, :user_agent
     
     include Connection
     include Rooms
@@ -60,6 +60,10 @@ module EventMachine
 
     def ignore_timestamps?
       self.ignore_timestamps || false
+    end
+
+    def user_agent
+      @user_agent || "em-campfire"
     end
   end # Campfire
 end # EventMachine

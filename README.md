@@ -56,7 +56,8 @@ EM.run {
     :logger => Logger::Syslog.new('process_name', Syslog::LOG_PID | Syslog::LOG_CONS),
     :cache => custom_cache_object,
     :ignore_self => true,
-    :ignore_timestamps => true
+    :ignore_timestamps => true,
+    :user_agent => "my bot"
   )
 
   # more code
@@ -84,6 +85,10 @@ em-campfire receives messages that it posted on it's streaming connections. By d
 #### :ignore_timestamps
 
 Campfire sends periodic timestamp messages. They're useless for most applications, so set this option and they will be totally ignored.
+
+#### :user_agent
+
+Sets the User-Agent header for the EventMachine::HttpRequests to Campfire. Defaults to "em-campfire".
 
 ## Requirements
 
