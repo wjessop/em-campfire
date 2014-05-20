@@ -61,5 +61,9 @@ module EventMachine
     def ignore_timestamps?
       self.ignore_timestamps || false
     end
+
+    def user_agent
+      @user_agent || "em-campfire"
+    end
   end # Campfire
 end # EventMachine

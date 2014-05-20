@@ -86,6 +86,10 @@ em-campfire receives messages that it posted on it's streaming connections. By d
 
 Campfire sends periodic timestamp messages. They're useless for most applications, so set this option and they will be totally ignored.
 
+#### :user_agent
+
+Sets the User-Agent header for the EventMachine::HttpRequests to Campfire. Defaults to "em-campfire".
+
 ## Requirements
 
 I've tested it in Ruby >= 1.9.3.
