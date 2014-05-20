@@ -37,10 +37,11 @@ def etag_for_data(data)
 end
 
 def valid_params
-  {:api_key => "6124d98749365e3db2c9e5b27ca04db6", :subdomain => "oxygen", :ignore_self => false} 
+  {:api_key => "6124d98749365e3db2c9e5b27ca04db6", :subdomain => "oxygen", :ignore_self => false, :user_agent => "em-campfire"}
 end
 
 class ModuleHarness
   def subdomain; valid_params[:subdomain]; end
   def api_key; valid_params[:api_key]; end
+  def user_agent; valid_params[:user_agent]; end
 end
