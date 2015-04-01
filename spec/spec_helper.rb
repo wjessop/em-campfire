@@ -10,7 +10,7 @@ require File.expand_path("../lib/em-campfire", File.dirname(__FILE__))
 require 'webmock/rspec'
 
 RSpec.configure do |config|
-  config.color_enabled = true
+  config.color = true
   config.mock_framework = :mocha
 end
 
