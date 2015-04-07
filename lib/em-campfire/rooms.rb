@@ -11,9 +11,11 @@ module EventMachine
         http.errback { logger.error "Error joining room: #{room_id}" }
         http.callback {
           if http.response_header.status == 200
-            logger.info "Joined room #{room_id} successfully"
+            EM.defer {logger.info "Joined room #{room_id} successfully"}
             joined_rooms[room_id] = true
-            yield(room_id) if block_given?
+            if block_given?
+              EM.next_tick { yield(room_id) }
+            end
           else
             logger.error "Error joining room: #{room_id}"
           end
@@ -26,12 +28,15 @@ module EventMachine
 
         url = "https://streaming.campfirenow.com/room/#{room_id}/live.json"
         # Timeout per https://github.com/igrigorik/em-http-request/wiki/Redirects-and-Timeouts
-        http = EventMachine::HttpRequest.new(url, :connect_timeout => 20, :inactivity_timeout => 4).get :head => {'authorization' => [api_key, 'X'], 'user-agent' => user_agent}
+        http = EventMachine::HttpRequest.new(url, :connect_timeout => 30, :inactivity_timeout => 8).get :head => {'authorization' => [api_key, 'X'], 'user-agent' => user_agent}
         http.errback {
           logger.error "Couldn't stream room #{room_id} at url #{url}, error was #{http.error}"
-          EM.next_tick {stream(room_id)}
+          EventMachine::Timer.new(5) {
+            EM.next_tick{stream(room_id)}
+          }
         }
         http.callback {
+          puts http.response_header.status
           if http.response_header.status == 200
             logger.info "Disconnected from #{url}"
           else
@@ -40,12 +45,26 @@ module EventMachine
           EM.next_tick {stream(room_id)}
         }
         http.stream do |chunk|
-          logger.debug "Got keepalive" if chunk == " "
-          begin
-            json_parser << chunk
-          rescue Yajl::ParseError => e
-            logger.error "Couldn't parse json data for room 123, data was #{chunk}, error was: #{e}"
-            EM.next_tick {stream(room_id)}
+          if http.response_header.status == 401
+            http.close
+
+            join(room_id) {
+              EventMachine::Timer.new(5) {
+                EM.next_tick { stream(room_id) }
+              }
+            }
+          elsif http.response_header.status == 200
+            logger.debug "Got keepalive" if chunk == " "
+            begin
+              json_parser << chunk
+            rescue Yajl::ParseError => e
+              logger.error "Couldn't parse json data for room 123, data was #{chunk}, error was: #{e}"
+              http.close
+              logger.error "Closed connection"
+              EM.next_tick {stream(room_id)}
+            end
+          else
+            raise RuntimeError, "Got status #{http.response_header.status} while connecting to #{url}"
           end
         end
       end

@@ -17,7 +17,7 @@ describe EventMachine::Campfire::Rooms do
     it "should allow joining by id" do
       join_stub = stub_join_room_request(123)
       EM.run_block { @adaptor.join(123) }
-      logger_output.should =~ /INFO.*Joined room 123 successfully/
+      logger_output.should =~ /INFO.*Joining room 123/
       join_stub.should have_been_requested
     end
 
@@ -30,11 +30,13 @@ describe EventMachine::Campfire::Rooms do
     it "should call a passed block on success" do
       join_stub = stub_join_room_request(123)
       object = mock()
-      object.expects(:ping).with("foo")
+      object.expects(:ping).with(123)
 
-      EM.run_block {
-        @adaptor.join(123) {|room_id| object.ping("foo") }
+      EM.run {
+        @adaptor.join(123) {|room_id| object.ping(room_id) }
+        EM.next_tick { EM.next_tick { EM.stop } }
       }
+
     end
   end
 
@@ -67,7 +69,7 @@ describe EventMachine::Campfire::Rooms do
       request = stub_timeout_stream_room_request(123)
 
       EM.run_block {@adaptor.stream(123)}
-      request.should have_been_requested.twice
+      EM.next_tick{ EM.next_tick{ request.should have_been_requested.twice } }
       logger_output.should =~ /ERROR.*Couldn't stream room 123 at url #{stream_url_for_room(123)}, error was WebMock timeout error/
     end
 

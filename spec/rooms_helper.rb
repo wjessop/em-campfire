@@ -85,7 +85,7 @@ end
 
 def stub_timeout_room_list_data_request
   stub_request(:get, rooms_data_url).
-    with(:headers => {'Authorization'=>['6124d98749365e3db2c9e5b27ca04db6', 'X'], 'Content-Type'=>'application/json'}, 'User-Agent' => valid_params[:user_agent]).
+    with(:headers => {'Authorization'=>['6124d98749365e3db2c9e5b27ca04db6', 'X'], 'Content-Type'=>'application/json', 'User-Agent' => valid_params[:user_agent]}).
     to_timeout
 end
 
